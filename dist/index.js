@@ -2904,7 +2904,8 @@ async function run() {
         const baseFile = core.getInput('base-file');
         const mergeFile = core.getInput('merge-file');
         const outputFile = core.getInput('output-file');
-        (0, mergeFiles_1.mergeFiles)(baseFile, mergeFile, outputFile);
+        const combineArrays = core.getInput('combine-arrays');
+        (0, mergeFiles_1.mergeFiles)(baseFile, mergeFile, outputFile, combineArrays === 'true');
         core.setOutput('Result', `Output written to: ${outputFile}`);
     }
     catch (error) {
@@ -2957,7 +2958,7 @@ const validFile = (fileName) => fileName !== '';
 exports.validFile = validFile;
 const validFileThatExists = (fileName) => (0, exports.validFile)(fileName) && fs.existsSync(fileName);
 exports.validFileThatExists = validFileThatExists;
-function mergeFiles(baseFile, mergeFile, outputFile) {
+function mergeFiles(baseFile, mergeFile, outputFile, combineArrays) {
     let valid = true;
     if (!(0, exports.validFileThatExists)(baseFile)) {
         console.log(`Base json file is invalid or missing: "${baseFile}"`);
@@ -2974,7 +2975,8 @@ function mergeFiles(baseFile, mergeFile, outputFile) {
     if (valid) {
         const baseJson = JSON.parse(fs.readFileSync(baseFile, { encoding: 'utf-8' }));
         const mergeJson = JSON.parse(fs.readFileSync(mergeFile, { encoding: 'utf-8' }));
-        const result = deepmerge_1.default.all([baseJson, mergeJson]);
+        const options = combineArrays ? { arrayMerge: combineMerge } : {};
+        const result = deepmerge_1.default.all([baseJson, mergeJson], options);
         fs.writeFileSync(outputFile, JSON.stringify(result, null, 2));
     }
     else {
@@ -2982,6 +2984,21 @@ function mergeFiles(baseFile, mergeFile, outputFile) {
     }
 }
 exports.mergeFiles = mergeFiles;
+const combineMerge = (target, source, options) => {
+    const destination = target.slice();
+    source.forEach((item, index) => {
+        if (typeof destination[index] === 'undefined') {
+            destination[index] = options.cloneUnlessOtherwiseSpecified(item, options);
+        }
+        else if (options.isMergeableObject(item)) {
+            destination[index] = (0, deepmerge_1.default)(target[index], item, options);
+        }
+        else if (target.indexOf(item) === -1) {
+            destination.push(item);
+        }
+    });
+    return destination;
+};
 
 
 /***/ }),

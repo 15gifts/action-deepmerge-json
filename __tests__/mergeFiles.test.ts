@@ -16,14 +16,19 @@ describe('mergeFiles', () => {
   it('fails when given a file that doesnt exist', async () => {
     ;(<jest.Mock>fs.existsSync).mockReturnValue(false)
     expect(() =>
-      mergeFiles('not-a-base-file.json', 'not-a-merge-file.json', 'output.json')
+      mergeFiles(
+        'not-a-base-file.json',
+        'not-a-merge-file.json',
+        'output.json',
+        false
+      )
     ).toThrow('Invalid request')
   })
 
   it('fails when given an invalid output file', async () => {
     ;(<jest.Mock>fs.existsSync).mockReturnValue(true)
     expect(() =>
-      mergeFiles('not-a-base-file.json', 'not-a-merge-file.json', '')
+      mergeFiles('not-a-base-file.json', 'not-a-merge-file.json', '', false)
     ).toThrow('Invalid request')
   })
 
@@ -31,7 +36,12 @@ describe('mergeFiles', () => {
     ;(<jest.Mock>fs.existsSync).mockReturnValue(true)
     ;(<jest.Mock>fs.readFileSync).mockReturnValueOnce(toJSON({ a: 'aa' }))
     ;(<jest.Mock>fs.readFileSync).mockReturnValueOnce(toJSON({ b: 'bb' }))
-    mergeFiles('mock-base-file.json', 'mock-merge-file.json', 'output.json')
+    mergeFiles(
+      'mock-base-file.json',
+      'mock-merge-file.json',
+      'output.json',
+      false
+    )
     expect(<jest.Mock>fs.existsSync).toHaveBeenCalledTimes(2)
     expect(<jest.Mock>fs.readFileSync).toHaveBeenCalledTimes(2)
     expect(<jest.Mock>fs.writeFileSync).toHaveBeenCalledWith(
@@ -44,7 +54,12 @@ describe('mergeFiles', () => {
     ;(<jest.Mock>fs.existsSync).mockReturnValue(true)
     ;(<jest.Mock>fs.readFileSync).mockReturnValueOnce(toJSON({ a: 'aa' }))
     ;(<jest.Mock>fs.readFileSync).mockReturnValueOnce(toJSON({ a: 'zz' }))
-    mergeFiles('mock-base-file.json', 'mock-merge-file.json', 'output.json')
+    mergeFiles(
+      'mock-base-file.json',
+      'mock-merge-file.json',
+      'output.json',
+      false
+    )
     expect(<jest.Mock>fs.existsSync).toHaveBeenCalledTimes(2)
     expect(<jest.Mock>fs.readFileSync).toHaveBeenCalledTimes(2)
     expect(<jest.Mock>fs.writeFileSync).toHaveBeenCalledWith(

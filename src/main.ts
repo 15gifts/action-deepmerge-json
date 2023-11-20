@@ -10,8 +10,9 @@ export async function run(): Promise<void> {
     const baseFile = core.getInput('base-file')
     const mergeFile = core.getInput('merge-file')
     const outputFile = core.getInput('output-file')
+    const combineArrays = core.getInput('combine-arrays')
 
-    mergeFiles(baseFile, mergeFile, outputFile)
+    mergeFiles(baseFile, mergeFile, outputFile, combineArrays === 'true')
 
     core.setOutput('Result', `Output written to: ${outputFile}`)
   } catch (error) {

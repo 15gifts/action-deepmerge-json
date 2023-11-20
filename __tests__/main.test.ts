@@ -20,7 +20,7 @@ describe('main', () => {
 
   it('calls the mergeFiles function', async () => {
     await main.run()
-    expect(<jest.Mock>core.getInput).toHaveBeenCalledTimes(3)
+    expect(<jest.Mock>core.getInput).toHaveBeenCalledTimes(4)
     expect(<jest.Mock>impl.mergeFiles).toHaveBeenCalled()
     expect(<jest.Mock>core.setOutput).toHaveBeenCalled()
   })
@@ -30,7 +30,7 @@ describe('main', () => {
       throw new Error('Boom')
     })
     await main.run()
-    expect(<jest.Mock>core.getInput).toHaveBeenCalledTimes(3)
+    expect(<jest.Mock>core.getInput).toHaveBeenCalledTimes(4)
     expect(<jest.Mock>impl.mergeFiles).toHaveBeenCalled()
     expect(<jest.Mock>core.setFailed).toHaveBeenCalled()
   })

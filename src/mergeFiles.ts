@@ -9,7 +9,8 @@ export const validFileThatExists = (fileName: string): boolean =>
 export function mergeFiles(
   baseFile: string,
   mergeFile: string,
-  outputFile: string
+  outputFile: string,
+  combineArrays: boolean
 ) {
   let valid = true
 
@@ -36,10 +37,26 @@ export function mergeFiles(
       fs.readFileSync(mergeFile, { encoding: 'utf-8' })
     )
 
-    const result = deepMerge.all([baseJson, mergeJson])
+    const options = combineArrays ? { arrayMerge: combineMerge } : {}
+    const result = deepMerge.all([baseJson, mergeJson], options)
 
     fs.writeFileSync(outputFile, JSON.stringify(result, null, 2))
   } else {
     throw new Error('Invalid request')
   }
+}
+
+const combineMerge = (target: any[], source: any[], options: any) => {
+  const destination = target.slice()
+
+  source.forEach((item, index) => {
+    if (typeof destination[index] === 'undefined') {
+      destination[index] = options.cloneUnlessOtherwiseSpecified(item, options)
+    } else if (options.isMergeableObject(item)) {
+      destination[index] = deepMerge(target[index], item, options)
+    } else if (target.indexOf(item) === -1) {
+      destination.push(item)
+    }
+  })
+  return destination
 }
