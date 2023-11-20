@@ -1,9 +1,10 @@
 import * as fs from 'fs'
 import deepMerge from 'deepmerge'
 
-export const validFile = (fileName: string): boolean => (fileName !== '')
+export const validFile = (fileName: string): boolean => fileName !== ''
 
-export const validFileThatExists = (fileName: string): boolean => (validFile(fileName) && fs.existsSync(fileName))
+export const validFileThatExists = (fileName: string): boolean =>
+  validFile(fileName) && fs.existsSync(fileName)
 
 export function mergeFiles(
   baseFile: string,
@@ -38,8 +39,7 @@ export function mergeFiles(
     const result = deepMerge.all([baseJson, mergeJson])
 
     fs.writeFileSync(outputFile, JSON.stringify(result, null, 2))
-  }
-  else {
+  } else {
     throw new Error('Invalid request')
   }
 }

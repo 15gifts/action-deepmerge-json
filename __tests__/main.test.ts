@@ -26,7 +26,9 @@ describe('main', () => {
   })
 
   it('handles exceptions correctly', async () => {
-    (<jest.Mock>impl.mergeFiles).mockImplementation(() => { throw new Error('Boom') })
+    ;(<jest.Mock>impl.mergeFiles).mockImplementation(() => {
+      throw new Error('Boom')
+    })
     await main.run()
     expect(<jest.Mock>core.getInput).toHaveBeenCalledTimes(3)
     expect(<jest.Mock>impl.mergeFiles).toHaveBeenCalled()

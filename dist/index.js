@@ -2905,6 +2905,7 @@ async function run() {
         const mergeFile = core.getInput('merge-file');
         const outputFile = core.getInput('output-file');
         (0, mergeFiles_1.mergeFiles)(baseFile, mergeFile, outputFile);
+        core.setOutput('Result', `Output written to: ${outputFile}`);
     }
     catch (error) {
         // Fail the workflow run if an error occurs
@@ -2949,26 +2950,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.mergeFiles = void 0;
+exports.mergeFiles = exports.validFileThatExists = exports.validFile = void 0;
 const fs = __importStar(__nccwpck_require__(147));
 const deepmerge_1 = __importDefault(__nccwpck_require__(323));
+const validFile = (fileName) => fileName !== '';
+exports.validFile = validFile;
+const validFileThatExists = (fileName) => (0, exports.validFile)(fileName) && fs.existsSync(fileName);
+exports.validFileThatExists = validFileThatExists;
 function mergeFiles(baseFile, mergeFile, outputFile) {
-    const baseFileExists = fs.existsSync(baseFile);
-    const mergeFileExists = fs.existsSync(mergeFile);
-    if (!baseFileExists) {
-        console.log('Base json file is missing: ' + baseFile);
+    let valid = true;
+    if (!(0, exports.validFileThatExists)(baseFile)) {
+        console.log(`Base json file is invalid or missing: "${baseFile}"`);
+        valid = false;
     }
-    if (!mergeFileExists) {
-        console.log('Merge json file is missing: ' + mergeFile);
+    if (!(0, exports.validFileThatExists)(mergeFile)) {
+        console.log(`Merge json file is invalid or missing: "${mergeFile}"`);
+        valid = false;
     }
-    if (baseFileExists && mergeFileExists) {
+    if (!(0, exports.validFile)(outputFile)) {
+        console.log(`Output json file is invalid: "${outputFile}"`);
+        valid = false;
+    }
+    if (valid) {
         const baseJson = JSON.parse(fs.readFileSync(baseFile, { encoding: 'utf-8' }));
         const mergeJson = JSON.parse(fs.readFileSync(mergeFile, { encoding: 'utf-8' }));
         const result = deepmerge_1.default.all([baseJson, mergeJson]);
-        console.log(result);
-        console.log('Writing to: ' + outputFile);
         fs.writeFileSync(outputFile, JSON.stringify(result, null, 2));
-        console.log('Output json file written successfully: ' + outputFile);
+    }
+    else {
+        throw new Error('Invalid request');
     }
 }
 exports.mergeFiles = mergeFiles;

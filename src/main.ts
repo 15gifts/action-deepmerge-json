@@ -14,8 +14,7 @@ export async function run(): Promise<void> {
     mergeFiles(baseFile, mergeFile, outputFile)
 
     core.setOutput('Result', `Output written to: ${outputFile}`)
-  }
-  catch (error) {
+  } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)
   }
