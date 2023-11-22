@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import { mergeFiles } from './mergeFiles'
+import { ArrayMergeStrategy, mergeFiles } from './mergeFiles'
 
 /**
  * The main function for the action.
@@ -10,9 +10,19 @@ export async function run(): Promise<void> {
     const baseFile = core.getInput('base-file')
     const mergeFile = core.getInput('merge-file')
     const outputFile = core.getInput('output-file')
-    const combineArrays = core.getInput('combine-arrays')
+    const arrayMergeStrategy: ArrayMergeStrategy =
+      ArrayMergeStrategy[
+        core.getInput('array-merge-strategy') as keyof typeof ArrayMergeStrategy
+      ]
 
-    mergeFiles(baseFile, mergeFile, outputFile, combineArrays === 'true')
+    console.log('mergeFiles parameters', {
+      baseFile,
+      mergeFile,
+      outputFile,
+      arrayMergeStrategy
+    })
+
+    mergeFiles(baseFile, mergeFile, outputFile, arrayMergeStrategy)
 
     core.setOutput('Result', `Output written to: ${outputFile}`)
   } catch (error) {

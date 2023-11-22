@@ -1,16 +1,23 @@
 import * as fs from 'fs'
-import deepMerge from 'deepmerge'
+import deepMerge, { ArrayMergeOptions } from 'deepmerge'
 
 export const validFile = (fileName: string): boolean => fileName !== ''
 
 export const validFileThatExists = (fileName: string): boolean =>
   validFile(fileName) && fs.existsSync(fileName)
 
+export enum ArrayMergeStrategy {
+  CombineAll,
+  OverwriteBaseArray,
+  MergeByIndex,
+  MergeByObjectName
+}
+
 export function mergeFiles(
   baseFile: string,
   mergeFile: string,
   outputFile: string,
-  combineArrays: boolean
+  arrayMergeStrategy: ArrayMergeStrategy = ArrayMergeStrategy.CombineAll
 ) {
   let valid = true
 
@@ -37,7 +44,9 @@ export function mergeFiles(
       fs.readFileSync(mergeFile, { encoding: 'utf-8' })
     )
 
-    const options = combineArrays ? { arrayMerge: combineMerge } : {}
+    const options: deepMerge.Options = {
+      arrayMerge: chooseArrayMergeOperation(arrayMergeStrategy)
+    }
     const result = deepMerge.all([baseJson, mergeJson], options)
 
     fs.writeFileSync(outputFile, JSON.stringify(result, null, 2))
@@ -46,7 +55,31 @@ export function mergeFiles(
   }
 }
 
-const combineMerge = (target: any[], source: any[], options: any) => {
+type ArrayMergeOperation = (
+  target: any[],
+  source: any[],
+  options: ArrayMergeOptions
+) => any[]
+
+function chooseArrayMergeOperation(
+  arrayMergeStrategy: ArrayMergeStrategy
+): ArrayMergeOperation | undefined {
+  switch (arrayMergeStrategy) {
+    case ArrayMergeStrategy.OverwriteBaseArray:
+      return overwriteBaseArray
+    case ArrayMergeStrategy.MergeByIndex:
+      return mergeByIndex
+    case ArrayMergeStrategy.CombineAll:
+    default:
+      return undefined
+  }
+}
+
+function mergeByIndex(
+  target: any[],
+  source: any[],
+  options: ArrayMergeOptions
+): any[] {
   const destination = target.slice()
 
   source.forEach((item, index) => {
@@ -59,4 +92,12 @@ const combineMerge = (target: any[], source: any[], options: any) => {
     }
   })
   return destination
+}
+
+function overwriteBaseArray(
+  target: any[],
+  source: any[],
+  options: ArrayMergeOptions
+): any[] {
+  return source
 }
