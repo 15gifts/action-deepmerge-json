@@ -56,7 +56,9 @@ jobs:
         id: test-action
         uses: ./
         with:
-          milliseconds: 1000
+          base-file: __tests__/examples/base-file.json
+          merge-file: __tests__/examples/merge-file.json
+          output-file: __tests__/examples/output-file.json
 
       - name: Print Output
         id: output
