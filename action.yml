@@ -18,10 +18,9 @@ inputs:
   output-file:
     description: 'Output json file for the combined results'
     required: true
-  combine-arrays:
-    description: 'Combine arrays'
+  array-merge-strategy:
+    description: 'Array merge strategy'
     required: false
-    default: 'false'
 
 runs:
   using: node20
