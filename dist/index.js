@@ -2905,12 +2905,6 @@ async function run() {
         const mergeFile = core.getInput('merge-file');
         const outputFile = core.getInput('output-file');
         const arrayMergeStrategy = mergeFiles_1.ArrayMergeStrategy[core.getInput('array-merge-strategy')];
-        console.log('mergeFiles parameters', {
-            baseFile,
-            mergeFile,
-            outputFile,
-            arrayMergeStrategy
-        });
         (0, mergeFiles_1.mergeFiles)(baseFile, mergeFile, outputFile, arrayMergeStrategy);
         core.setOutput('Result', `Output written to: ${outputFile}`);
     }
