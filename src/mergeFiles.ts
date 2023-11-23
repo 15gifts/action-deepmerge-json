@@ -81,7 +81,7 @@ function mergeByIndex(
 ): any[] {
   const destination = target.slice()
 
-  for (const [index, item] of source) {
+  source.forEach((item, index) => {
     if (typeof destination[index] === 'undefined') {
       destination[index] = options.cloneUnlessOtherwiseSpecified(item, options)
     } else if (options.isMergeableObject(item)) {
@@ -89,7 +89,7 @@ function mergeByIndex(
     } else if (!target.includes(item)) {
       destination.push(item)
     }
-  }
+  })
 
   return destination
 }
