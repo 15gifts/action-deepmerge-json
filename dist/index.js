@@ -3005,7 +3005,7 @@ function chooseArrayMergeOperation(arrayMergeStrategy) {
 }
 function mergeByIndex(target, source, options) {
     const destination = target.slice();
-    for (const [index, item] of source) {
+    source.forEach((item, index) => {
         if (typeof destination[index] === 'undefined') {
             destination[index] = options.cloneUnlessOtherwiseSpecified(item, options);
         }
@@ -3015,7 +3015,7 @@ function mergeByIndex(target, source, options) {
         else if (!target.includes(item)) {
             destination.push(item);
         }
-    }
+    });
     return destination;
 }
 function overwriteBaseArray(target, source, options) {
