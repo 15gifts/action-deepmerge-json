@@ -3005,17 +3005,17 @@ function chooseArrayMergeOperation(arrayMergeStrategy) {
 }
 function mergeByIndex(target, source, options) {
     const destination = target.slice();
-    source.forEach((item, index) => {
+    for (const [index, item] of source) {
         if (typeof destination[index] === 'undefined') {
             destination[index] = options.cloneUnlessOtherwiseSpecified(item, options);
         }
         else if (options.isMergeableObject(item)) {
             destination[index] = (0, deepmerge_1.default)(target[index], item, options);
         }
-        else if (target.indexOf(item) === -1) {
+        else if (!target.includes(item)) {
             destination.push(item);
         }
-    });
+    }
     return destination;
 }
 function overwriteBaseArray(target, source, options) {
