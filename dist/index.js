@@ -2905,6 +2905,12 @@ async function run() {
         const mergeFile = core.getInput('merge-file');
         const outputFile = core.getInput('output-file');
         const arrayMergeStrategy = mergeFiles_1.ArrayMergeStrategy[core.getInput('array-merge-strategy')];
+        // Debug log inputs
+        core.debug(`baseFile: ${baseFile}`);
+        core.debug(`mergeFile: ${mergeFile}`);
+        core.debug(`outputFile: ${outputFile}`);
+        core.debug(`arrayMergeStrategy: ${arrayMergeStrategy}`);
+        // Do merge
         (0, mergeFiles_1.mergeFiles)(baseFile, mergeFile, outputFile, arrayMergeStrategy);
         core.setOutput('Result', `Output written to: ${outputFile}`);
     }

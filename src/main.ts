@@ -15,6 +15,13 @@ export async function run(): Promise<void> {
         core.getInput('array-merge-strategy') as keyof typeof ArrayMergeStrategy
       ]
 
+    // Debug log inputs
+    core.debug(`baseFile: ${baseFile}`)
+    core.debug(`mergeFile: ${mergeFile}`)
+    core.debug(`outputFile: ${outputFile}`)
+    core.debug(`arrayMergeStrategy: ${arrayMergeStrategy}`)
+
+    // Do merge
     mergeFiles(baseFile, mergeFile, outputFile, arrayMergeStrategy)
 
     core.setOutput('Result', `Output written to: ${outputFile}`)
