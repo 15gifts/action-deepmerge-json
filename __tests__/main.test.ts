@@ -15,58 +15,67 @@ jest.mock('@actions/core')
 jest.mock('../src/mergeFiles')
 
 describe('main', () => {
+  const castAsMock = (t: any): jest.Mock => t as jest.Mock
+
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
   it('calls the mergeFiles function', async () => {
     await main.run()
-    expect(<jest.Mock>core.getInput).toHaveBeenCalledTimes(4)
-    expect(<jest.Mock>impl.mergeFiles).toHaveBeenCalled()
-    expect(<jest.Mock>core.setOutput).toHaveBeenCalled()
+
+    expect(core.getInput).toHaveBeenCalledTimes(4)
+    expect(impl.mergeFiles).toHaveBeenCalled()
+    expect(core.setOutput).toHaveBeenCalled()
   })
 
   it('handles exceptions correctly', async () => {
-    ;(<jest.Mock>impl.mergeFiles).mockImplementation(() => {
+    castAsMock(impl.mergeFiles).mockImplementation(() => {
       throw new Error('Boom')
     })
+
     await main.run()
-    expect(<jest.Mock>core.getInput).toHaveBeenCalledTimes(4)
-    expect(<jest.Mock>impl.mergeFiles).toHaveBeenCalled()
-    expect(<jest.Mock>core.setFailed).toHaveBeenCalled()
+
+    expect(core.getInput).toHaveBeenCalledTimes(4)
+    expect(impl.mergeFiles).toHaveBeenCalled()
+    expect(core.setFailed).toHaveBeenCalled()
   })
 
   it('parses inputs correctly', async () => {
-    ;(<jest.Mock>core.getInput).mockReturnValueOnce('base-file.json')
-    ;(<jest.Mock>core.getInput).mockReturnValueOnce('merge-file.json')
-    ;(<jest.Mock>core.getInput).mockReturnValueOnce('output-file.json')
-    ;(<jest.Mock>core.getInput).mockReturnValueOnce('OverwriteBaseArray')
-    ;(<jest.Mock>impl.mergeFiles).mockImplementation(() => {})
+    castAsMock(core.getInput).mockReturnValueOnce('base-file.json')
+    castAsMock(core.getInput).mockReturnValueOnce('merge-file.json')
+    castAsMock(core.getInput).mockReturnValueOnce('output-file.json')
+    castAsMock(core.getInput).mockReturnValueOnce('OverwriteBaseArray')
+    castAsMock(impl.mergeFiles).mockImplementation(() => {})
+
     await main.run()
-    expect(<jest.Mock>impl.mergeFiles).toHaveBeenCalledWith(
+
+    expect(impl.mergeFiles).toHaveBeenCalledWith(
       'base-file.json',
       'merge-file.json',
       'output-file.json',
       ArrayMergeStrategy.OverwriteBaseArray
     )
-    expect(<jest.Mock>core.setFailed).not.toHaveBeenCalled()
-    expect(<jest.Mock>core.setOutput).toHaveBeenCalled()
+    expect(core.setFailed).not.toHaveBeenCalled()
+    expect(core.setOutput).toHaveBeenCalled()
   })
 
   it('parses inputs correctly, when no array merge strategy given', async () => {
-    ;(<jest.Mock>core.getInput).mockReturnValueOnce('base-file.json')
-    ;(<jest.Mock>core.getInput).mockReturnValueOnce('merge-file.json')
-    ;(<jest.Mock>core.getInput).mockReturnValueOnce('output-file.json')
-    ;(<jest.Mock>core.getInput).mockReturnValueOnce(undefined)
-    ;(<jest.Mock>impl.mergeFiles).mockImplementation(() => {})
+    castAsMock(core.getInput).mockReturnValueOnce('base-file.json')
+    castAsMock(core.getInput).mockReturnValueOnce('merge-file.json')
+    castAsMock(core.getInput).mockReturnValueOnce('output-file.json')
+    castAsMock(core.getInput).mockReturnValueOnce(undefined)
+    castAsMock(impl.mergeFiles).mockImplementation(() => {})
+
     await main.run()
-    expect(<jest.Mock>impl.mergeFiles).toHaveBeenCalledWith(
+
+    expect(impl.mergeFiles).toHaveBeenCalledWith(
       'base-file.json',
       'merge-file.json',
       'output-file.json',
       undefined
     )
-    expect(<jest.Mock>core.setFailed).not.toHaveBeenCalled()
-    expect(<jest.Mock>core.setOutput).toHaveBeenCalled()
+    expect(core.setFailed).not.toHaveBeenCalled()
+    expect(core.setOutput).toHaveBeenCalled()
   })
 })

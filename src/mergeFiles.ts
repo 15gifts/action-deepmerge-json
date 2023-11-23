@@ -9,8 +9,7 @@ export const validFileThatExists = (fileName: string): boolean =>
 export enum ArrayMergeStrategy {
   CombineAll,
   OverwriteBaseArray,
-  MergeByIndex,
-  MergeByObjectName
+  MergeByIndex
 }
 
 export function mergeFiles(

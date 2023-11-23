@@ -2963,7 +2963,6 @@ var ArrayMergeStrategy;
     ArrayMergeStrategy[ArrayMergeStrategy["CombineAll"] = 0] = "CombineAll";
     ArrayMergeStrategy[ArrayMergeStrategy["OverwriteBaseArray"] = 1] = "OverwriteBaseArray";
     ArrayMergeStrategy[ArrayMergeStrategy["MergeByIndex"] = 2] = "MergeByIndex";
-    ArrayMergeStrategy[ArrayMergeStrategy["MergeByObjectName"] = 3] = "MergeByObjectName";
 })(ArrayMergeStrategy || (exports.ArrayMergeStrategy = ArrayMergeStrategy = {}));
 function mergeFiles(baseFile, mergeFile, outputFile, arrayMergeStrategy = ArrayMergeStrategy.CombineAll) {
     let valid = true;
